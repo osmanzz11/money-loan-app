@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const appDiv = document.getElementById('app');
-    const apiUrl = 'http://localhost:3000';
+    const apiUrl = 'https://ml-app-caed.onrender.com';
 
     function renderLoginForm() {
         appDiv.innerHTML = `
