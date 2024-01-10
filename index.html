@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Management System</title>
+</head>
+
+<body>
+
+    <div id="app"></div>
+
+    <script>
+        const appDiv = document.getElementById('app');
+        const apiUrl = 'http://localhost:3000'; // Replace with your actual backend API URL
+
+        function renderLoginForm() {
+            appDiv.innerHTML = `
+            <h2>Login to money loan app</h2>
+            <form id="loginForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <br>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <br>
+                <button type="button" onclick="login()">Login</button>
+            </form>
+        `;
+        }
+
+        function renderRegisterForm() {
+            appDiv.innerHTML = `
+            <h2>Register to Money loan app</h2>
+            <form id="registerForm">
+                <label for="newUsername">Username:</label>
+                <input type="text" id="newUsername" name="newUsername" required>
+                <br>
+                <label for="newPassword">Password:</label>
+                <input type="password" id="newPassword" name="newPassword" required>
+                <br>
+                <button type="button" onclick="register()">Register</button>
+            </form>
+        `;
+        }
+
+        function renderLoanOptions(options) {
+            appDiv.innerHTML = `
+            <h2>Loan Options from Money Loan App</h2>
+            <ul>
+                ${options.map(option => `
+                    <li>${option.name} - Amount: $${option.amount} | Interest Rate: ${option.interestRate}%
+                        <input type="number" id="amount_${option.id}" placeholder="Enter Amount" />
+                        <button type="button" onclick="chooseLoan(${option.id})">Choose</button>
+                        <span id="status_${option.id}"></span>
+                    </li>`).join('')}
+            </ul>
+        `;
+        }
+
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            // Send login request to the backend
+            fetch(`${apiUrl}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        fetchLoanOptions();
+                        alert('Login successful');
+                    } else {
+                        alert(data.message || 'Login failed');
+                    }
+                });
+        }
+
+        function register() {
+            const newUsername = document.getElementById('newUsername').value;
+            const newPassword = document.getElementById('newPassword').value;
+
+            // Send registration request to the backend
+            fetch(`${apiUrl}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username: newUsername, password: newPassword }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        alert('Registration successful');
+                        renderLoginForm(); // Switch to the login form after successful registration
+                    } else {
+                        alert('Registration failed');
+                    }
+                });
+        }
+
+        function fetchLoanOptions() {
+            // Fetch loan options from the backend
+            fetch(`${apiUrl}/loan-options`)
+                .then(response => response.json())
+                .then(data => renderLoanOptions(data.options))
+                .catch(error => console.error('Error:', error));
+        }
+
+        function chooseLoan(loanId) {
+            const amountInput = document.getElementById(`amount_${loanId}`);
+            const selectedAmount = amountInput.value;
+
+            if (selectedAmount.trim() === '' || isNaN(selectedAmount) || selectedAmount <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+
+            // You can add logic here to handle the selection of a loan
+            // For now, let's just update the status next to the chosen loan
+            document.getElementById(`status_${loanId}`).innerText = `Pending - Amount: $${selectedAmount}`;
+        }
+
+        // Initial rendering
+        renderRegisterForm();
+
+    </script>
+
+</body>
+
+</html>
