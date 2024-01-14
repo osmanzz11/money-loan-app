@@ -4,7 +4,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loan Management System</title>
+    <title>Money Loan Application</title>
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #app {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            text-align: center;
+        }
+
+        h2 {
+            color: #333333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        label {
+            margin-bottom: 8px;
+            color: #555555;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4caf50;
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #dddddd;
+            border-radius: 4px;
+            background-color: #ffffff;
+        }
+    </style>
 </head>
 
 <body>
@@ -13,11 +89,11 @@
 
     <script>
         const appDiv = document.getElementById('app');
-        const apiUrl = 'http://localhost:3000'; // Replace with your actual backend API URL
+        const apiUrl = 'https://ml-app-caed.onrender.com'; // Replace with your actual backend API URL
 
         function renderLoginForm() {
             appDiv.innerHTML = `
-            <h2>Login to money loan app</h2>
+            <h2>Login to Money Loan App</h2>
             <form id="loginForm">
                 <label for="username">Username:</label>
                 <input type="text" id="username" name="username" required>
@@ -32,7 +108,7 @@
 
         function renderRegisterForm() {
             appDiv.innerHTML = `
-            <h2>Register to Money loan app</h2>
+            <h2>Register to Money Loan App</h2>
             <form id="registerForm">
                 <label for="newUsername">Username:</label>
                 <input type="text" id="newUsername" name="newUsername" required>
@@ -59,6 +135,18 @@
         `;
         }
 
+        function renderUserProfile(user) {
+            appDiv.innerHTML = `
+            <h2>Welcome, ${user.username}!</h2>
+            <p>Your Profile:</p>
+            <ul>
+                <li>Username: ${user.username}</li>
+                <!-- Add more profile information as needed -->
+            </ul>
+            <button type="button" onclick="fetchLoanOptions()">View Loan Options</button>
+        `;
+        }
+
         function login() {
             const username = document.getElementById('username').value;
             const password = document.getElementById('password').value;
@@ -74,8 +162,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.message) {
-                        fetchLoanOptions();
-                        alert('Login successful');
+                        renderUserProfile({ username });
                     } else {
                         alert(data.message || 'Login failed');
                     }
@@ -97,7 +184,6 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.message) {
-                        alert('Registration successful');
                         renderLoginForm(); // Switch to the login form after successful registration
                     } else {
                         alert('Registration failed');
